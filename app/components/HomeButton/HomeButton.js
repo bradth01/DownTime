@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 import React, { Component } from 'react';
 import {
@@ -12,7 +12,7 @@ import {
   AlertIOS,
   View
 } from 'react-native';
-import styles from './styles';
+import styles from '../styles';
 import {
   getCurrentLocation,
   getAddress,
@@ -22,20 +22,20 @@ import {
   addUpdateTime,
   nearbySearch,
   formatToTime
-} from '../utils';
-import {seed} from '../database';
-import {SERVER_ROUTE} from '../server/env/development';
+} from '../../../utils';
+import {seed} from '../../../database';
+import {SERVER_ROUTE} from '../../../server/env/development';
 
 console.disableYellowBox = true;
 
 class HomeButton extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       logging: false,
       collection: null,
       inputShow: false
-    }
+    };
   }
 
   componentWillMount() {
@@ -46,18 +46,18 @@ class HomeButton extends Component {
         this.setState({
           locations: locations
         });
-      })
+      });
     })
     .catch(alert);
   }
 
   _type = (str) => {
     var locationNames = this.state.locations.map(location => location.name);
-    var collection = locationNames.filter(name => name.substr(0, str.length) === str).slice(0,5);
+    var collection = locationNames.filter(name => name.substr(0, str.length) === str).slice(0, 5);
     this.setState({
       searchString: str,
       collection: collection
-    })
+    });
   }
 
   setLocationNameState(text) {
@@ -68,7 +68,7 @@ class HomeButton extends Component {
     return locations.filter(location => {
       return (Math.abs(location.coords.latitude - currPosition.coords.latitude) <= 0.0003 && 
         Math.abs(location.coords.longitude - currPosition.coords.longitude) <= 0.0003
-      )
+      );
     });
   }
 
@@ -98,7 +98,7 @@ class HomeButton extends Component {
           let dateObj = {
             hours: logTime.getHours(),
             minutes: logTime.getMinutes()
-          }
+          };
           let formattedTime = formatToTime(dateObj);
           name = formattedTime + ' | ' + street;
         }
@@ -114,13 +114,13 @@ class HomeButton extends Component {
         })
         .then(location => {
           addUpdateTime(location, true, position.timestamp)
-          .then(this.stateToggle)
+          .then(this.stateToggle);
         });
       })
       .catch(alert);
 
     } else {
-        addUpdateTime(existNearbyLoc[0], true, position.timestamp)
+      addUpdateTime(existNearbyLoc[0], true, position.timestamp)
         .then(this.stateToggle)
         .catch(alert);
     }
@@ -132,13 +132,13 @@ class HomeButton extends Component {
         this.setState({position: position});
         let existNearbyLoc = this.findExistingNearbyLoc(position, this.state.locations);
         if (existNearbyLoc.length) {
-           AlertIOS.alert('Location already exists', 'Location will be logged as ' + existNearbyLoc[0].name + '.', () => {
-              this.processLocationInput(existNearbyLoc);
-           })
+          AlertIOS.alert('Location already exists', 'Location will be logged as ' + existNearbyLoc[0].name + '.', () => {
+            this.processLocationInput(existNearbyLoc);
+          });
         } else {
           this.setState({
             inputShow: true,
-            position: position,
+            position: position
           });
         }
       });
@@ -186,7 +186,7 @@ class HomeButton extends Component {
             {this.state.collection && !!this.state.collection.length && this.state.collection.map((value, idx) => (
                 <TouchableOpacity
                   style={styles.autocompleteList} 
-                  key={idx+1} 
+                  key={idx + 1}
                   onPress={() => { this.refs.input.setNativeProps({ text: value ? value : '' }); this.setLocationNameState(value); }}>
                   <Text style={styles.autocompleteText}>{value}</Text>
                 </TouchableOpacity>
@@ -195,8 +195,8 @@ class HomeButton extends Component {
           </View>
         )}
       </View>
-    )
+    );
   }
 }
 
-module.exports = HomeButton;
+export default HomeButton;
